@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="me.karimoff.customlist.MainActivity">
+
+    <TextView
+        android:id="@+id/searchTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/search"
+        android:textSize="20sp"
+        android:labelFor="@+id/searchEditText"/>
+    <EditText
+        android:id="@+id/searchEditText"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/searchTextView"/>
+    <ListView
+        android:id="@+id/friendsListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchEditText"
+        android:textFilterEnabled="true">
+
+    </ListView>
+</RelativeLayout>

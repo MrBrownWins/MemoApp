@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_100"
+    android:orientation="vertical"
+    android:weightSum="4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            style="@style/ThemeOverlay.FirebaseIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_firebase_lockup"
+            android:src="@drawable/firebase_lockup_400" />
+
+        <TextView
+            android:id="@+id/title_user_email"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:text="@string/title_user_email" />
+
+        <TextView
+            android:id="@+id/title_user_id"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:text="@string/title_user_id" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="@color/grey_300">
+
+        <Button
+            android:id="@+id/button_email_signout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+    </LinearLayout>
+
+</LinearLayout>

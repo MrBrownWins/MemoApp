@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "384911947835",
+    "firebase_url": "https://glowing-torch-2394.firebaseio.com",
+    "project_id": "glowing-torch-2394",
+    "storage_bucket": "glowing-torch-2394.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384911947835:android:8f7cb5d305b96ea6",
+        "android_client_info": {
+          "package_name": "me.karimoff.memochat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384911947835-ovt5nslolf9s95o9jg3o4vtnvocrctj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.karimoff.memochat",
+            "certificate_hash": "65e1338cd865b47aff2119c480d86c33c56f8fdb"
+          }
+        },
+        {
+          "client_id": "384911947835-12j3jjcfh7gctqf4cc4797kscqj9p9nj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcyORTExlbdsY_V94tk6nHKfgRCvV4woU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384911947835-12j3jjcfh7gctqf4cc4797kscqj9p9nj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
