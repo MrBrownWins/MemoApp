@@ -1,4 +1,4 @@
-package me.karimoff.memochat;
+package me.karimoff.memochat.memo;
 
 
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.karimoff.memochat.R;
 
 
 /**

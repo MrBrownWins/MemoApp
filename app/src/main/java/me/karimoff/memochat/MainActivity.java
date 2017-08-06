@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.karimoff.memochat.memo.MemoListFragment;
 
 public class MainActivity extends AppCompatActivity {
 

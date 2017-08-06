@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,10 +24,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
+import butterknife.OnTextChanged;
 
 
 /**
@@ -38,10 +38,11 @@ public class ChatListFragment extends Fragment {
 
     @BindView(R.id.searchTextView) TextView searchTextText;
     @BindView(R.id.searchEditText) EditText searchEditText;
+
     @BindView(R.id.friendsListView) ListView friendsListView;
 
-    ArrayList<String> friendsList = new ArrayList<>();
-    ArrayAdapter<String> friendsListAdapter;
+    List<User> friendsList = new ArrayList<>();
+    UserAdapter friendsListAdapter;
 
     private FirebaseAuth mAuth;
     FirebaseUser user;
@@ -69,19 +70,32 @@ public class ChatListFragment extends Fragment {
         return view;
     }
 
+    @OnTextChanged(R.id.searchEditText)
+    public void afterTextChanged(Editable editable) {
+
+        String filterText = editable.toString();
+        if (filterText.length() > 0) {
+            friendsListAdapter.getFilter().filter(filterText);
+        } else {
+            friendsListAdapter.getFilter().filter("");
+        }
+
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         Query users = mDatabase.child("users").orderByKey();
 
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
+        users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> friends = new ArrayList<>();
+                List<User> friends = new ArrayList<>();
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    friends.add(data.getKey());
+                    User obj = data.getValue(User.class);
+                    friends.add(obj);
                 }
                 friendsList = friends;
             }
@@ -92,40 +106,38 @@ public class ChatListFragment extends Fragment {
             }
         });
 
-        friendsListAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, friendsList);
-
-        friendsListView.setAdapter(friendsListAdapter);
-
-    }
-
-    @OnItemClick(R.id.friendsListView)
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        final String room1 = user.getUid() + "_" + friendsList.get(i);
-        final String room2 = friendsList.get(i) + "_" + user.getUid();
-        final DatabaseReference chats = mDatabase.child("chats");
-
-        chats.addListenerForSingleValueEvent(new ValueEventListener() {
+        friendsListAdapter = new UserAdapter(getActivity(), R.layout.user_list_item, friendsList, new OnChatRoomClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(room1)){
-                    startChatActivity(room1);
-                } else if(dataSnapshot.hasChild(room2)){
-                    startChatActivity(room2);
-                } else {
-                    chats.child(room1).setValue(new Chat(new Date(), null));
-                    startChatActivity(room1);
-                }
-            }
+            public void onClicked(String uid, int position) {
+                final String room1 = user.getUid() + "_" + friendsList.get(position).getUid();
+                final String room2 = friendsList.get(position).getUid() + "_" + user.getUid();
+                final DatabaseReference chats = mDatabase.child("chats");
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                chats.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(room1)) {
+                            startChatActivity(room1);
+                        } else if (dataSnapshot.hasChild(room2)) {
+                            startChatActivity(room2);
+                        } else {
+                            chats.child(room1).setValue(new Chat(new Date(), null));
+                            startChatActivity(room1);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
+        friendsListView.setAdapter(friendsListAdapter);
     }
-    public void startChatActivity(String room){
+
+    public void startChatActivity(String room) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra("room", room);
         startActivity(intent);
