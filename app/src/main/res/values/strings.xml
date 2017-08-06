@@ -60,5 +60,6 @@
     <string name="title_user_email">User email: %s</string>
     <string name="title_user_id">User ID: %s</string>
     <string name="search">Search</string>
+    <string name="type_message">Type a message...</string>
 
 </resources>

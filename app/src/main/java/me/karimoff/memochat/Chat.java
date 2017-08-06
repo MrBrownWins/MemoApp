@@ -8,8 +8,9 @@ import java.util.List;
  */
 
 public class Chat {
-    private Date created;
-    private List<Message> messages;
+    public Date created;
+    public List<Message> messages;
+
 
     public Chat(Date created, List<Message> messages) {
         this.created = created;
