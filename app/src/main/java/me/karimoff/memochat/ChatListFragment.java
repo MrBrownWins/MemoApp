@@ -34,7 +34,7 @@ public class ChatListFragment extends Fragment {
     @BindView(R.id.searchEditText) EditText searchEditText;
     @BindView(R.id.friendsListView) ListView friendsListView;
 
-    ArrayList<String> friendsList = new ArrayList<String>();
+    ArrayList<String> friendsList = new ArrayList<>();
     ArrayAdapter<String> friendsListAdapter;
 
     private DatabaseReference mDatabase;
@@ -55,20 +55,25 @@ public class ChatListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
         ButterKnife.bind(this, view);
-        friendsListAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, friendsList);
 
-        friendsListView.setAdapter(friendsListAdapter);
+        return view;
+    }
 
-        DatabaseReference userListReference = mDatabase.child("users");
-        Query users = userListReference.orderByKey();
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Query users = mDatabase.child("users").orderByKey();
 
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> friends = new ArrayList<>();
+
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    friendsList.add(data.getKey());
+                    friends.add(data.getKey());
                 }
+                friendsList = friends;
             }
 
             @Override
@@ -77,12 +82,10 @@ public class ChatListFragment extends Fragment {
             }
         });
 
-        return view;
-    }
+        friendsListAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, friendsList);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        friendsListView.setAdapter(friendsListAdapter);
 
     }
 }
