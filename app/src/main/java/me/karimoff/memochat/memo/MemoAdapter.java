@@ -1,4 +1,4 @@
-package me.karimoff.memochat;
+package me.karimoff.memochat.memo;
 
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +13,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.karimoff.memochat.R;
 
 /**
  * Created by karimoff on 8/3/17.

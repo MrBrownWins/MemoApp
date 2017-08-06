@@ -1,6 +1,5 @@
 package me.karimoff.memochat;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.service.autofill.Dataset;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,7 +33,6 @@ public class ChatActivity extends AppCompatActivity implements TextView.OnEditor
     @BindView(R.id.edit_text_message) EditText textMessageET;
     @BindView(R.id.recycler_view_chat) RecyclerView recyclerView;
 
-    Intent intent;
     Bundle bundle;
     String room;
 
@@ -75,7 +74,7 @@ public class ChatActivity extends AppCompatActivity implements TextView.OnEditor
                     Message message = data.getValue(Message.class);
                     messages.add(message);
                 }
-
+                messagesList = messages;
             }
 
             @Override
@@ -83,6 +82,7 @@ public class ChatActivity extends AppCompatActivity implements TextView.OnEditor
 
             }
         });
+
 
         recyclerView.setAdapter(mAdapter);
 
@@ -101,7 +101,20 @@ public class ChatActivity extends AppCompatActivity implements TextView.OnEditor
         String text = textMessageET.getText().toString();
         Message message = new Message(text, user.getUid() , new Date());
 
-        DatabaseReference newMessage = messages.child(room).push();
+        DatabaseReference newMessage = messages.push();
         newMessage.setValue(message);
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

@@ -1,4 +1,4 @@
-package me.karimoff.memochat;
+package me.karimoff.memochat.memo;
 
 import android.graphics.drawable.Drawable;
 

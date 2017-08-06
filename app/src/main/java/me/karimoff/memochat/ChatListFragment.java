@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,10 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 
 /**
@@ -38,10 +37,14 @@ public class ChatListFragment extends Fragment {
 
     @BindView(R.id.searchTextView) TextView searchTextText;
     @BindView(R.id.searchEditText) EditText searchEditText;
-    @BindView(R.id.friendsListView) ListView friendsListView;
 
-    ArrayList<String> friendsList = new ArrayList<>();
-    ArrayAdapter<String> friendsListAdapter;
+    @BindView(R.id.friendsRecyclerView) RecyclerView friendsRecyclerView;
+
+    List<User> friendsList = new ArrayList<>();
+
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
 
     private FirebaseAuth mAuth;
     FirebaseUser user;
@@ -69,19 +72,32 @@ public class ChatListFragment extends Fragment {
         return view;
     }
 
+//    @OnTextChanged(R.id.searchEditText)
+//    public void afterTextChanged(Editable editable) {
+//
+//        String filterText = editable.toString();
+//        if (filterText.length() > 0) {
+//            mAdapter.
+//        } else {
+//            mAdapter.getFilter().filter("");
+//        }
+//
+//    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         Query users = mDatabase.child("users").orderByKey();
 
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
+        users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> friends = new ArrayList<>();
+                List<User> friends = new ArrayList<>();
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    friends.add(data.getKey());
+                    User obj = data.getValue(User.class);
+                    friends.add(obj);
                 }
                 friendsList = friends;
             }
@@ -92,47 +108,45 @@ public class ChatListFragment extends Fragment {
             }
         });
 
-        friendsListAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, friendsList);
+        friendsRecyclerView.setHasFixedSize(true);
 
-        friendsListView.setAdapter(friendsListAdapter);
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        friendsRecyclerView.setLayoutManager(mLayoutManager);
 
-        friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mAdapter = new UserAdapter(friendsList, new OnChatClickedListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+            public void onChatClicked(String uid, int position) {
+                final String room1 = user.getUid() + "_" + friendsList.get(position).getUid();
+                final String room2 = friendsList.get(position).getUid() + "_" + user.getUid();
+                final DatabaseReference chats = mDatabase.child("chats");
 
-    @OnItemClick(R.id.friendsListView)
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        final String room1 = user.getUid() + "_" + friendsList.get(i);
-        final String room2 = friendsList.get(i) + "_" + user.getUid();
-        final DatabaseReference chats = mDatabase.child("chats");
+                chats.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(room1)) {
+                            startChatActivity(room1);
+                        } else if (dataSnapshot.hasChild(room2)) {
+                            startChatActivity(room2);
+                        } else {
+                            chats.child(room1).setValue(new Chat(new Date(), null));
+                            startChatActivity(room1);
+                        }
+                    }
 
-        chats.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(room1)){
-                    startChatActivity(room1);
-                } else if(dataSnapshot.hasChild(room2)){
-                    startChatActivity(room2);
-                } else {
-                    chats.child(room1).setValue(new Chat(new Date(), null));
-                    startChatActivity(room1);
-                }
-            }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+                    }
+                });
             }
         });
 
+        friendsRecyclerView.setAdapter(mAdapter);
+
     }
-    public void startChatActivity(String room){
+
+    public void startChatActivity(String room) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra("room", room);
         startActivity(intent);

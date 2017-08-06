@@ -18,13 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/searchTextView"/>
-    <ListView
-        android:id="@+id/friendsListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/searchEditText"
-        android:textFilterEnabled="true"
-        android:choiceMode="singleChoice">
 
-    </ListView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/friendsRecyclerView"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>
