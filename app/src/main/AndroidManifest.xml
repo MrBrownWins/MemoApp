@@ -36,10 +36,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EmailPasswordActivity"
-            android:parentActivityName=".AuthActivity"/>
-        <activity android:name=".PhoneNumberActivity"
-            android:parentActivityName=".AuthActivity"/>
+        <activity
+            android:name=".EmailPasswordActivity"
+            android:parentActivityName=".AuthActivity" />
+        <activity
+            android:name=".PhoneNumberActivity"
+            android:parentActivityName=".AuthActivity" />
+        <activity android:name=".ChatActivity"></activity>
     </application>
 
 </manifest>
