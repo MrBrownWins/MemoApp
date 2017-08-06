@@ -26,12 +26,13 @@ import butterknife.Unbinder;
  */
 public class ProfileFragment extends Fragment {
 
+    //Binding with Butterknife
     @BindView(R.id.title_user_email) TextView mUserEmail;
     @BindView(R.id.title_user_id) TextView mUserId;
 
     private Unbinder unbinder;
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth; //the app uses firebase authentication for registration
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -72,7 +73,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); //the app uses firebase authentication for registration
         updateUI(mAuth.getCurrentUser());
     }
 
@@ -82,6 +83,7 @@ public class ProfileFragment extends Fragment {
         unbinder.unbind();
     }
 
+    //when sign out button is clicked log out from app and go to AuthActivity
     @OnClick(R.id.button_email_signout)
     public void signOut(Button button){
         mAuth.signOut();

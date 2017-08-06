@@ -27,27 +27,28 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailPassword";
 
+    ////Binding with Butterknife
     @BindView(R.id.status) TextView mStatusTextView;
     @BindView(R.id.detail) TextView mDetailTextView;
     @BindView(R.id.field_email) EditText mEmailField;
     @BindView(R.id.field_password) EditText mPasswordField;
 
     // [START declare_auth]
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth; //the app uses firebase authentication for registration
+    private DatabaseReference mDatabase; //DatabaseReferece is for database connection
     // [END declare_auth]
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_password);
-        ButterKnife.bind(this);
+        ButterKnife.bind(this); //Binding Butterknife. without this butterknife does not work
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference(); //firebase database connection
     }
 
     // [START on_start_check_user]
@@ -72,7 +73,6 @@ public class EmailPasswordActivity extends AppCompatActivity {
         }
 
         //showProgressDialog();
-
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -103,16 +103,16 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
     private void writeOnDatabase(FirebaseUser user){
 
-        mDatabase.child("users").child(user.getUid()).setValue(user);
+        mDatabase.child("users").child(user.getUid()).setValue(user); //writing to firebase
 
     }
+
+    //this is for signing in validation
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
         if (!validateForm()) {
             return;
         }
-
-        //showProgressDialog();
 
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
@@ -144,6 +144,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         // [END sign_in_with_email]
     }
 
+    //for signing out
     private void signOut() {
         mAuth.signOut();
         updateUI(null);
@@ -180,6 +181,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         // [END send_email_verification]
     }
 
+    //for email and password validation
     private boolean validateForm() {
         boolean valid = true;
 
@@ -205,6 +207,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         //hideProgressDialog();
         if (user != null) {
+            //adding some UI info for users: email and User id.
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
                     user.getEmail(), user.isEmailVerified()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
@@ -224,6 +227,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         }
     }
 
+    //when sign in button is clicked lust sign in
     @OnClick({R.id.email_sign_in_button, R.id.email_create_account_button, R.id.sign_out_button, R.id.verify_email_button})
     public void onClick(View v) {
         int i = v.getId();

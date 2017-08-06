@@ -33,22 +33,26 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+//This fragment is for listing all friends to select.
 public class ChatListFragment extends Fragment {
 
+    //Binding with ButterKnife
     @BindView(R.id.searchTextView) TextView searchTextText;
     @BindView(R.id.searchEditText) EditText searchEditText;
 
     @BindView(R.id.friendsRecyclerView) RecyclerView friendsRecyclerView;
 
-    List<User> friendsList = new ArrayList<>();
+    List<User> friendsList = new ArrayList<>(); //this list is to store all users
 
+    //below is for declaring RecyclerView
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth; //the app uses firebase authentication for registration
     FirebaseUser user;
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase; //DatabaseReferece is for database connection
 
     public ChatListFragment() {
         // Required empty public constructor
@@ -57,7 +61,8 @@ public class ChatListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference(); //Firebase database connection
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
     }
@@ -72,29 +77,20 @@ public class ChatListFragment extends Fragment {
         return view;
     }
 
-//    @OnTextChanged(R.id.searchEditText)
-//    public void afterTextChanged(Editable editable) {
-//
-//        String filterText = editable.toString();
-//        if (filterText.length() > 0) {
-//            mAdapter.
-//        } else {
-//            mAdapter.getFilter().filter("");
-//        }
-//
-//    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Query users = mDatabase.child("users").orderByKey();
+        Query users = mDatabase.child("users").orderByKey(); //querying all user in the database
 
+        //if there is a new user, this listener will automatically inform
         users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<User> friends = new ArrayList<>();
 
+                //getting all users
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     User obj = data.getValue(User.class);
                     friends.add(obj);
@@ -114,13 +110,15 @@ public class ChatListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         friendsRecyclerView.setLayoutManager(mLayoutManager);
 
+        //this adapter is for creating new chat rooms or accesing to chat rooms when new message is send
         mAdapter = new UserAdapter(friendsList, new OnChatClickedListener() {
             @Override
             public void onChatClicked(String uid, int position) {
                 final String room1 = user.getUid() + "_" + friendsList.get(position).getUid();
                 final String room2 = friendsList.get(position).getUid() + "_" + user.getUid();
-                final DatabaseReference chats = mDatabase.child("chats");
+                final DatabaseReference chats = mDatabase.child("chats"); //database connection
 
+                //listener is to read new messages
                 chats.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,7 +146,7 @@ public class ChatListFragment extends Fragment {
 
     public void startChatActivity(String room) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra("room", room);
+        intent.putExtra("room", room); //sending room id to ChatActivity
         startActivity(intent);
     }
 }

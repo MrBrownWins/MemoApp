@@ -16,6 +16,8 @@ import butterknife.ButterKnife;
  * Created by karimoff on 8/3/17.
  */
 
+
+//User addapter for display list of users in recyclerView
 class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private List<User> userData;
@@ -24,13 +26,13 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     // creating custom View Holder for Recycle View
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.emailTextView) TextView emailTextView;
+        @BindView(R.id.emailTextView) TextView emailTextView; //Binding with Butterknife
         @BindView(R.id.uidTextView) TextView uidTextView;
         @BindView(R.id.chatButton) Button chatButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            ButterKnife.bind(this, itemView); //Binding the ButterKnife
         }
     }
 
@@ -41,6 +43,7 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public UserAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflate the layout for this adapter
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.user_list_item,parent,false);
 
