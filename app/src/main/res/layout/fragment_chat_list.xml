@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.karimoff.customlist.MainActivity">
+    tools:context="me.karimoff.memochat.MainActivity">
 
     <TextView
         android:id="@+id/searchTextView"
@@ -23,7 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/searchEditText"
-        android:textFilterEnabled="true">
+        android:textFilterEnabled="true"
+        android:choiceMode="singleChoice">
 
     </ListView>
 </RelativeLayout>
