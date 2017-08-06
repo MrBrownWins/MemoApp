@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +28,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnTextChanged;
 
 
 /**
@@ -39,10 +38,13 @@ public class ChatListFragment extends Fragment {
     @BindView(R.id.searchTextView) TextView searchTextText;
     @BindView(R.id.searchEditText) EditText searchEditText;
 
-    @BindView(R.id.friendsListView) ListView friendsListView;
+    @BindView(R.id.friendsRecyclerView) RecyclerView friendsRecyclerView;
 
     List<User> friendsList = new ArrayList<>();
-    UserAdapter friendsListAdapter;
+
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
 
     private FirebaseAuth mAuth;
     FirebaseUser user;
@@ -70,17 +72,17 @@ public class ChatListFragment extends Fragment {
         return view;
     }
 
-    @OnTextChanged(R.id.searchEditText)
-    public void afterTextChanged(Editable editable) {
-
-        String filterText = editable.toString();
-        if (filterText.length() > 0) {
-            friendsListAdapter.getFilter().filter(filterText);
-        } else {
-            friendsListAdapter.getFilter().filter("");
-        }
-
-    }
+//    @OnTextChanged(R.id.searchEditText)
+//    public void afterTextChanged(Editable editable) {
+//
+//        String filterText = editable.toString();
+//        if (filterText.length() > 0) {
+//            mAdapter.
+//        } else {
+//            mAdapter.getFilter().filter("");
+//        }
+//
+//    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -106,9 +108,15 @@ public class ChatListFragment extends Fragment {
             }
         });
 
-        friendsListAdapter = new UserAdapter(getActivity(), R.layout.user_list_item, friendsList, new OnChatRoomClickListener() {
+        friendsRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        friendsRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new UserAdapter(friendsList, new OnChatClickedListener() {
             @Override
-            public void onClicked(String uid, int position) {
+            public void onChatClicked(String uid, int position) {
                 final String room1 = user.getUid() + "_" + friendsList.get(position).getUid();
                 final String room2 = friendsList.get(position).getUid() + "_" + user.getUid();
                 final DatabaseReference chats = mDatabase.child("chats");
@@ -134,7 +142,8 @@ public class ChatListFragment extends Fragment {
             }
         });
 
-        friendsListView.setAdapter(friendsListAdapter);
+        friendsRecyclerView.setAdapter(mAdapter);
+
     }
 
     public void startChatActivity(String room) {
